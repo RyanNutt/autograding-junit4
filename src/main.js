@@ -18,8 +18,8 @@ function getInputs() {
     const libFolder = core.getInput('lib-folder') || 'lib'
     const partialCredit = core.getInput('partial-credit') === 'true'
 
-    const buildCommand = 'javac -cp ' + libFolder + '/* -d . *.java'
-    const runCommand = 'java -cp ' + libFolder + '/*:. org.junit.runner.JUnitCore ' + testClasses.join(' ')
+    const buildCommand = 'javac -cp "' + libFolder + '/*" -d . *.java'
+    const runCommand = 'java -cp "' + libFolder + '/*:." org.junit.runner.JUnitCore ' + testClasses.join(' ')
 
     return { testName, testClasses, setupCommand, timeout, maxScore, libFolder, partialCredit, buildCommand, runCommand }
 }
