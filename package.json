@@ -4,7 +4,8 @@
   "description": "GitHub Classroom autograding action for JUnit4 tests",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "esbuild src/main.js --bundle --minify --platform=node --outfile=dist/main.js"
   },
   "repository": {
     "type": "git",
