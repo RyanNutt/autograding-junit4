@@ -1,0 +1,37 @@
+name: "GitHub Classroom JUni4 Autograder"
+author: "RyanNutt"
+description: "GitHub action for automatically grading Java projects with JUnit4"
+inputs:
+  test-name:
+    description: "Unique identifier for this test"
+    required: true
+  setup-command:
+    description: "Command to execute prior to test, typically used for setting up environment. Do not include javac here."
+    required: false
+    default: ""
+  test-class:
+    description: "Name of the test class, comma separated if multiple"
+    required: true
+  timeout:
+    description: "Time in minutes to wait for the test to complete"
+    required: false
+    default: "5"
+  max-score:
+    description: "Max points a student can receive for this test"
+    required: false
+    default: "0"
+  lib-path:
+    description: "Path to the JUnit4 jar file, and any other needed jar files"
+    required: false
+    default: "lib"
+  partial-credit:
+    description: "If true, students will receive partial credit for passing some tests"
+    required: false
+    default: "false"
+
+outputs:
+  result:
+    description: "Outputs from the test run"
+runs:
+  using: "node20"
+  main: "dist/main.js"
