@@ -17,7 +17,7 @@ jobs:
         with:
           test-name: "echo test"
           setup-command: "echo 'Getting Setup'"
-          command: "echo 'Hello, World'"
+          # command: "echo 'Hello, World'"
       - name: Decode and assert echo-test
         uses: actions/github-script@v6
         with:
