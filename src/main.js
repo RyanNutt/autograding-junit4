@@ -59,11 +59,15 @@ function setup(inputs) {
 
             console.error()
 
-            console.error('stdout:')
-            console.error(error.stdout.toString())
-            console.error()
-            console.error('stderr:')
-            console.error(error.stderr.toString())
+            if (error.stdout) {
+                console.error('stdout:')
+                console.error(error.stdout.toString())
+                console.error()
+            }
+            if (error.stderr) {
+                console.error('stderr:')
+                console.error(error.stderr.toString())
+            }
 
             core.setOutput('result', btoa(JSON.stringify(result)))
 
