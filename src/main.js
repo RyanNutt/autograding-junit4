@@ -58,9 +58,11 @@ function run() {
             env,
         }).toString()
 
+        console.log('Ran through all steps')
         console.log(output)
 
     } catch (error) {
+        console.error(error)
         const result = {
             version: 1,
             status: 'error',
