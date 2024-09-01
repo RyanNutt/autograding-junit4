@@ -1,0 +1,23 @@
+{
+  "name": "autograde-junit4",
+  "version": "1.0.0",
+  "description": "GitHub Classroom autograding action for JUnit4 tests",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/RyanNutt/autograding-junit4.git"
+  },
+  "author": "RyanNutt",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/RyanNutt/autograding-junit4/issues"
+  },
+  "homepage": "https://github.com/RyanNutt/autograding-junit4#readme",
+  "dependencies": {
+    "@actions/core": "^1.10.1",
+    "@actions/exec": "^1.1.1"
+  }
+}
