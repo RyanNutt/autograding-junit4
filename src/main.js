@@ -24,25 +24,49 @@ function getInputs() {
     return { testName, testClasses, setupCommand, timeout, maxScore, libFolder, partialCredit, buildCommand, runCommand }
 }
 
-function execute() {
-
-}
-
-function run() {
-    let inputs = {}
-
-    try {
-        inputs = getInputs()
-
-        if (inputs.setupCommand) {
+/**
+ * Execute the setup command, if needed
+ */
+function setup(inputs) {
+    if (inputs.setupCommand) {
+        try {
             execSync(inputs.setupCommand, {
                 timeout: inputs.timeout,
                 stdio: 'inherit',
                 env,
             })
-        }
+        } catch (error) {
+            const result = {
+                version: 1,
+                status: 'error',
+                max_score: 0,
+                tests: [{
+                    name: inputs.testName || 'Unknown Test',
+                    status: 'error',
+                    message: error.message,
+                    test_code: `${inputs.setupCommand || 'Unknown Command'}`,
+                    filename: '',
+                    line_no: 0,
+                    execution_time: 0,
+                }],
+            }
 
-        // Build the project
+            console.error('Error running setup command')
+            console.error('---------------------------')
+            console.error(error.message)
+
+            core.setOutput('result', btoa(JSON.stringify(result)))
+
+            // Tell the next functions not to bother
+            return false;
+        }
+    }
+
+    return true;
+}
+
+function build(inputs) {
+    try {
         console.log('Building the project...\n' + inputs.buildCommand)
         execSync(inputs.buildCommand, {
             timeout: inputs.timeout,
@@ -50,41 +74,46 @@ function run() {
             env,
         })
 
-        // Run the tests
-        console.log('Running the tests...\n' + inputs.runCommand)
-        const output = execSync(inputs.runCommand, {
-            timeout: inputs.timeout,
-            stdio: 'pipe',
-            env,
-        }).toString()
-
-        console.log('Ran through all steps')
-        console.log(output)
-
+        return true;
     } catch (error) {
-        console.error(error)
         const result = {
             version: 1,
             status: 'error',
-            tests: [
-                {
-                    name: inputs.testName || 'Unknown Test',
-                    status: 'error',
-                    message: error.message,
-                    test_code: `${inputs.runCommand || 'Unknown Command'}`,
-                    filename: '',
-                    line_no: 0,
-                    execution_time: 0,
-                },
-            ],
+            max_score: 0,
+            tests: [{
+                name: inputs.testName || 'Unknown Test',
+                status: 'error',
+                message: error.message,
+                test_code: `${inputs.buildCommand || 'Unknown Command'}`,
+                filename: '',
+                line_no: 0,
+                execution_time: 0,
+            }],
         }
 
+        console.error('Error building Java code')
+        console.error('------------------------')
+        console.error(error.message)
+
         core.setOutput('result', btoa(JSON.stringify(result)))
+
+        return false;
     }
+}
+
+function run(inputs) {
+    console.log('Running the tests...\n' + inputs.runCommand)
+
 }
 
 function btoa(str) {
     return Buffer.from(str).toString('base64')
 }
 
-run()
+let inputs = getInputs()
+
+if (setup(inputs)) {
+    if (build(inputs)) {
+        run(inputs)
+    }
+}
