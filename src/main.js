@@ -39,7 +39,7 @@ function setup(inputs) {
             const result = {
                 version: 1,
                 status: 'error',
-                max_score: 0,
+                max_score: inputs.maxScore,
                 tests: [{
                     name: inputs.testName || 'Unknown Test',
                     status: 'error',
@@ -52,8 +52,18 @@ function setup(inputs) {
             }
 
             console.error('Error running setup command')
-            console.error('---------------------------')
-            console.error(error.message)
+            console.error('This is probably something your teacher needs to fix')
+            console.error()
+
+            console.error('Message: ' + error.message)
+
+            console.error()
+
+            console.error('stdout:')
+            console.error(error.stdout.toString())
+            console.error()
+            console.error('stderr:')
+            console.error(error.stderr.toString())
 
             core.setOutput('result', btoa(JSON.stringify(result)))
 
@@ -67,14 +77,11 @@ function setup(inputs) {
 
 function build(inputs) {
     try {
-        console.log('Building the project...\n' + inputs.buildCommand)
         execSync(inputs.buildCommand, {
             timeout: inputs.timeout,
             stdio: 'inherit',
             env,
         })
-
-        return true;
     } catch (error) {
         const result = {
             version: 1,
@@ -92,13 +99,23 @@ function build(inputs) {
         }
 
         console.error('Error building Java code')
-        console.error('------------------------')
-        console.error(error.message)
+        console.error()
+        console.error('Error: ' + error.message)
+        console.error()
+        console.error('stdout:')
+        console.error(error.stdout.toString())
+        console.error()
+        console.error('stderr:')
+        console.error(error.stderr.toString())
+
+
 
         core.setOutput('result', btoa(JSON.stringify(result)))
 
-        return false;
+        return false
     }
+
+    return true
 }
 
 function run(inputs) {
