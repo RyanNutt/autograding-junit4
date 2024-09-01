@@ -12,8 +12,8 @@ jobs:
           fetch-depth: 0
       - name: Git config
         run: |
-          git config user.name autograding-release-bot
-          git config user.email autograding-release-bot+education@github.com
+          git config user.name "Ryan Nutt"
+          git config user.email ryan@nutt.com
       - name: Run build and commit to releases/v1
         run: |
           git reset --hard origin/main
