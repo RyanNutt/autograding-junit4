@@ -247,12 +247,21 @@ function run(inputs) {
                     actual = matchExpected[2]
                 }
 
-                table.push([message, expected, actual])
+                table.push([message || 'Unexpected Result', expected, actual])
             } else {
                 // It's an exception, needs to fill the table
+                let reReplace = [
+                    /java\.lang\.(.*):/i,
+                    /org\.junit\.runners\.model\.TestTimedOutException: (.*)/i,
+                ]
+
+                for (const re of reReplace) {
+                    msg = msg.replace(re, '').trim()
+                }
+
                 table.push([{
                     colSpan: 3,
-                    content: msg.replace(/^java\.lang\./i, '').trim()   // Don't need extra info here
+                    content: msg  // Don't need extra info here
                 }])
             }
         }
