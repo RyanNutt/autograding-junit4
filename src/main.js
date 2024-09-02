@@ -221,7 +221,19 @@ function run(inputs) {
         })
 
         for (const match of stdOut.matchAll(reFailures)) {
-            table.push([match[1], '', ''])
+            let msg = match[1].trim()
+
+            if (msg.match(/^java\.lang\.AssertionError: /i)) {
+                // It's an assertion error
+                msg = msg.replace(/^java\.lang\.AssertionError: /i, '').trim()
+                table.push([msg, '', ''])
+            } else {
+                // It's an exception, needs to fill the table
+                table.push({
+                    colSpan: 3,
+                    content: msg,
+                })
+            }
         }
 
         console.log(table.toString())
