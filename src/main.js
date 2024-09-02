@@ -127,6 +127,8 @@ function build(inputs) {
             console.error(rs.stderr.toString())
         }
 
+        console.error(rs)
+
         core.setOutput('result', btoa(JSON.stringify(result)))
 
         return false
