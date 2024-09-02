@@ -247,7 +247,15 @@ function run(inputs) {
                     actual = matchExpected[2]
                 }
 
-                table.push([message || 'Unexpected Result', expected, actual])
+                if (expected != '' || actual != '') {
+                    table.push([message || 'Unexpected Result', expected, actual])
+                } else {
+                    table.push([{
+                        colSpan: 3,
+                        content: msg
+                    }])
+                }
+
             } else {
                 // It's an exception, needs to fill the table
                 let reReplace = [
