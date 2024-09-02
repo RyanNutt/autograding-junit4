@@ -93,7 +93,7 @@ function build(inputs) {
     try {
         rs = execSync(inputs.buildCommand, {
             timeout: inputs.timeout,
-            stdio: 'inherit',
+            stdio: 'pipe',
             env,
         })
 
