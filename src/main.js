@@ -117,20 +117,18 @@ function build(inputs) {
 
         console.error()
         console.error('❌ Error building Java code')
-        console.error('Error: \n' + error.message.trim())
 
-        if (error.stdout) {
+        if (error.stdout && error.stdout.length > 0) {
+            console.error();
             console.error('stdout:')
-            console.error(error.stdout.toString())
+            console.error(error.stdout.toString().trim())
+        }
+
+        if (error.stderr && error.stderr.length > 0) {
             console.error()
-        }
-
-        if (error.stderr) {
             console.error('stderr:')
-            console.error(error.stderr.toString())
+            console.error(error.stderr.toString().trim())
         }
-
-        console.error(error)
 
         core.setOutput('result', btoa(JSON.stringify(result)))
 
