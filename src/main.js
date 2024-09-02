@@ -145,9 +145,29 @@ function run(inputs) {
             env,
         })
 
-        console.info(rs)
+        console.info(rs.toString())
+
+        // All tests passed
+        const result = {
+            version: 1,
+            status: 'pass',
+            max_score: inputs.maxScore,
+            tests: [
+                {
+                    name: inputs.testName || 'Unknown Test',
+                    status: 'pass',
+                    message: 'Tests passed',
+                    test_code: `${inputs.runCommand || 'Unknown Command'}`,
+                    filename: '',
+                    line_no: 0,
+                    execution_time: 0,
+                    score: inputs.maxScore,
+                }
+            ],
+        }
 
     } catch (error) {
+        // Possible that some tests passed, so we'll have to parse the output and figure it out
         const result = {
             version: 1,
             status: 'error',
