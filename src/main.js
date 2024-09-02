@@ -138,7 +138,50 @@ function build(inputs) {
 }
 
 function run(inputs) {
-    console.log('Running the tests...\n' + inputs.runCommand)
+    try {
+        rs = execSync(inputs.runCommand, {
+            timeout: inputs.timeout,
+            stdio: 'pipe',
+            env,
+        })
+
+        console.info(rs)
+
+    } catch (error) {
+        const result = {
+            version: 1,
+            status: 'error',
+            max_score: inputs.maxScore,
+            tests: [{
+                name: inputs.testName || 'Unknown Test',
+                status: 'error',
+                message: 'Error running tests, see ' + (inputs.testName || 'Unknown Test') + ' above for more details',
+                test_code: `${inputs.runCommand || 'Unknown Command'}`,
+                filename: '',
+                line_no: 0,
+                execution_time: 0,
+            }],
+        }
+
+        console.error()
+        console.error('❌ Error running tests')
+
+        if (error.stdout && error.stdout.length > 0) {
+            console.error();
+            console.error('Standard Output:')
+            console.error(error.stdout.toString().trim())
+        }
+
+        if (error.stderr && error.stderr.length > 0) {
+            console.error()
+            console.error('Error Output:')
+            console.error(error.stderr.toString().trim())
+        }
+
+        core.setOutput('result', btoa(JSON.stringify(result)))
+
+        return false
+    }
 
 }
 
