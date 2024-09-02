@@ -145,7 +145,17 @@ function run(inputs) {
             env,
         })
 
-        console.info(rs.toString())
+        rs = rs.toString()
+
+        // Parse, we really only care about the dot lines and test cout since
+        // this was a successful run. The dot lines are immediately after the
+        // version
+        let re = /version\s*\d+\.\d+(\.\d+)\r?\n(.*?)(\r?\n|$)/g
+        let match = re.exec(rs)
+        let dots = match[2] || ''
+
+        console.info('✔ ' + dots.length + ' test' + (dots.length > 1 ? 's' : '') + ' passed')
+
 
         // All tests passed
         const result = {
