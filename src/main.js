@@ -90,13 +90,16 @@ function setup(inputs) {
  */
 function build(inputs) {
 
-    let rs = spawnSync(inputs.buildCommand, {
-        timeout: inputs.timeout,
-        stdio: 'pipe',
-        env,
-    })
+    try {
+        rs = execSync(inputs.buildCommand, {
+            timeout: inputs.timeout,
+            stdio: 'inherit',
+            env,
+        })
 
-    if (rs.error) {
+        // Don't care about the output, just that it builds without an error code > 0
+        return true;
+    } catch (error) {
         const result = {
             version: 1,
             status: 'error',
@@ -114,27 +117,26 @@ function build(inputs) {
 
         console.error()
         console.error('❌ Error building Java code')
-        console.error('Error: \n' + rs.error.message)
+        console.error('Error: \n' + error.message.trim())
 
-        if (rs.stdout) {
+        if (error.stdout) {
             console.error('stdout:')
-            console.error(rs.stdout.toString())
+            console.error(error.stdout.toString())
             console.error()
         }
 
-        if (rs.stderr) {
+        if (error.stderr) {
             console.error('stderr:')
-            console.error(rs.stderr.toString())
+            console.error(error.stderr.toString())
         }
 
-        console.error(rs)
+        console.error(error)
 
         core.setOutput('result', btoa(JSON.stringify(result)))
 
         return false
     }
 
-    return true;
 }
 
 function run(inputs) {
