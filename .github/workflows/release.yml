@@ -1,6 +1,7 @@
 name: Release
 on:
   workflow_dispatch:
+  push:
 permissions:
   contents: write
   pull-requests: write
@@ -17,6 +18,11 @@ jobs:
         run: |
           git config user.name "Ryan Nutt"
           git config user.email ryan@nutt.com
+      - name: Get version
+        id: project-version
+        uses: "euberdeveloper/ga-project-version-action@main"
+        with:
+          package-manager: npm
       - name: Run build and commit to releases/v1
         run: |
           git reset --hard origin/main
