@@ -39,9 +39,7 @@ function setup(inputs) {
             env,
         })
 
-        console.log(rs)
-
-        if (rs.status > 0) {
+        if (rs.error) {
             const result = {
                 version: 1,
                 status: 'error',
