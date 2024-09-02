@@ -92,7 +92,7 @@ function build(inputs) {
 
     let rs = spawnSync(inputs.buildCommand, {
         timeout: inputs.timeout,
-        stdio: 'inherit',
+        stdio: 'pipe',
         env,
     })
 
