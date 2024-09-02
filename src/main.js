@@ -226,7 +226,19 @@ function run(inputs) {
             if (msg.match(/^java\.lang\.AssertionError: /i)) {
                 // It's an assertion error
                 msg = msg.replace(/^java\.lang\.AssertionError: /i, '').trim()
-                table.push([msg, '', ''])
+
+                // Get the message, expected, and actual values
+                let message = msg.replace(/expected: <.*> but was: <.*>$/i, '').trim()
+                let expected = ''
+                let actual = ''
+                let reExpected = /expected: <(.*)> but was: <(.*)>$/i
+                let matchExpected = reExpected.exec(msg)
+                if (matchExpected) {
+                    expected = matchExpected[1]
+                    actual = matchExpected[2]
+                }
+
+                table.push([msg, expected, actual])
             } else {
                 // It's an exception, needs to fill the table
                 table.push([{
