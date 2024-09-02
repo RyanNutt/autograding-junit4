@@ -18,11 +18,6 @@ jobs:
         run: |
           git config user.name "Ryan Nutt"
           git config user.email ryan@nutt.com
-      - name: Get version
-        id: project-version
-        uses: "euberdeveloper/ga-project-version@main"
-        with:
-          package-manager: npm
       - name: Run build and commit to releases/v1
         run: |
           git reset --hard origin/main
@@ -31,6 +26,11 @@ jobs:
           git add dist/
           git commit -m "Release v1"
           git push -f origin releases/v1
+      - name: Get version
+        id: project-version
+        uses: "euberdeveloper/ga-project-version@main"
+        with:
+          package-manager: npm
       - name: Tag and push v1
         run: |
           git tag -f v1 # Since we are already on releases/v1 we don't need a ref. This will tag HEAD of releases/v1.
