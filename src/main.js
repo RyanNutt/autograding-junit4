@@ -32,12 +32,14 @@ function getInputs() {
  */
 function setup(inputs) {
     if (inputs.setupCommand) {
-
+        console.log('Running setup command...\n' + inputs.setupCommand)
         let rs = spawnSync(inputs.setupCommand, {
             timeout: inputs.timeout,
-            stdio: 'pipe',
+            stdio: 'ignore',
             env,
         })
+
+        console.log(rs)
 
         if (rs.status > 0) {
             const result = {
@@ -47,7 +49,7 @@ function setup(inputs) {
                 tests: [{
                     name: inputs.testName || 'Unknown Test',
                     status: 'error',
-                    message: 'Error running setup command, see ' + (inputs.textName || 'Unknown Test') + ' above for more details',
+                    message: 'Error running setup command, see ' + (inputs.testName || 'Unknown Test') + ' above for more details',
                     test_code: `${inputs.setupCommand || 'Unknown Command'}`,
                     filename: '',
                     line_no: 0,
