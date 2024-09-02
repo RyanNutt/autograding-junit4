@@ -62,12 +62,16 @@ function setup(inputs) {
             console.error('Command: ' + inputs.setupCommand)
             console.error('Error: ' + rs.error.message)
 
-            console.error('stdout:')
-            console.error(rs.stdout.toString())
-            console.error()
+            if (rs.stdout) {
+                console.error('stdout:')
+                console.error(rs.stdout.toString())
+                console.error()
+            }
 
-            console.error('stderr:')
-            console.error(rs.stderr.toString())
+            if (rs.stderr) {
+                console.error('stderr:')
+                console.error(rs.stderr.toString())
+            }
 
             core.setOutput('result', btoa(JSON.stringify(result)))
 
