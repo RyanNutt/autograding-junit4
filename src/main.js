@@ -229,10 +229,10 @@ function run(inputs) {
                 table.push([msg, '', ''])
             } else {
                 // It's an exception, needs to fill the table
-                table.push({
+                table.push([{
                     colSpan: 3,
-                    content: msg,
-                })
+                    content: msg.replace(/^java\.lang\./i, '').trim()   // Don't need extra info here
+                }])
             }
         }
 
