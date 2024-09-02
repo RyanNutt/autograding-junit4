@@ -1,5 +1,6 @@
 const { execSync, spawnSync, spawn } = require('child_process')
 const core = require('@actions/core')
+const Table = require('cli-table3')
 
 const env = {
     PATH: process.env.PATH,
@@ -147,14 +148,14 @@ function run(inputs) {
 
         rs = rs.toString()
 
-        // Parse, we really only care about the dot lines and test cout since
+        // Parse, we really only care about the dot lines and test count since
         // this was a successful run. The dot lines are immediately after the
         // version
         let re = /version\s*\d+\.\d+(\.\d+)\r?\n(.*?)(\r?\n|$)/g
         let match = re.exec(rs)
         let dots = match[2] || ''
 
-        console.info('✔ ' + dots.length + ' test' + (dots.length > 1 ? 's' : '') + ' passed')
+        console.log('✅ ' + dots.length + ' test' + (dots.length > 1 ? 's' : '') + ' passed')
 
 
         // All tests passed
@@ -195,14 +196,35 @@ function run(inputs) {
             }],
         }
 
-        console.error()
-        console.error('❌ Error running tests')
+        let stdOut = error.stdout ? error.stdout.toString().trim() : ''
+        let re = /version\s*\d+\.\d+(\.\d+)\r?\n(.*?)(\r?\n|$)/g
+        let match = re.exec(stdOut)
+        let dots = match[2] || ''
 
-        if (error.stdout && error.stdout.length > 0) {
-            console.error();
-            console.error('Standard Output:')
-            console.error(error.stdout.toString().trim())
+        // Count the periods to get the number of tests
+        let testCount = dots.match(/\./g).length
+        let errorCount = dots.match(/E/gi).length
+
+        console.error()
+        if (testCount === errorCount) {
+            console.error('❌ All ' + testCount + ' tests failed')
+        } else {
+            console.error('❌ ' + errorCount + ' of ' + testCount + ' tests failed')
         }
+
+        // Get the error lines for mesages
+        let reFailures = /^\d+\)\s+.*$\s(.*)$/gm
+        let matchesFailures = []
+
+        let table = new Table({
+            head: ['Message', 'Expected', 'Actual'],
+        })
+
+        for (const match of stdOut.matchAll(reFailures)) {
+            table.push([match[1], '', ''])
+        }
+
+        console.log(table.toString())
 
         if (error.stderr && error.stderr.length > 0) {
             console.error()
