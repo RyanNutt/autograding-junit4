@@ -166,6 +166,8 @@ function run(inputs) {
             ],
         }
 
+        core.setOutput('result', btoa(JSON.stringify(result)))
+
     } catch (error) {
         // Possible that some tests passed, so we'll have to parse the output and figure it out
         const result = {
