@@ -1,4 +1,4 @@
-const { execSync } = require('child_process')
+const { execSync, spawnSync } = require('child_process')
 const core = require('@actions/core')
 
 const env = {
@@ -24,18 +24,22 @@ function getInputs() {
     return { testName, testClasses, setupCommand, timeout, maxScore, libFolder, partialCredit, buildCommand, runCommand }
 }
 
+
 /**
- * Execute the setup command, if needed
+ * Execute the setup command, if needed.
+ * 
+ * Output is ignored, just care if it runs successfully
  */
 function setup(inputs) {
     if (inputs.setupCommand) {
-        try {
-            execSync(inputs.setupCommand, {
-                timeout: inputs.timeout,
-                stdio: 'inherit',
-                env,
-            })
-        } catch (error) {
+
+        let rs = spawnSync(inputs.setupCommand, {
+            timeout: inputs.timeout,
+            stdio: 'pipe',
+            env,
+        })
+
+        if (rs.status > 0) {
             const result = {
                 version: 1,
                 status: 'error',
@@ -43,7 +47,7 @@ function setup(inputs) {
                 tests: [{
                     name: inputs.testName || 'Unknown Test',
                     status: 'error',
-                    message: error.message,
+                    message: 'Error running setup command, see ' + (inputs.textName || 'Unknown Test') + ' above for more details',
                     test_code: `${inputs.setupCommand || 'Unknown Command'}`,
                     filename: '',
                     line_no: 0,
@@ -51,50 +55,52 @@ function setup(inputs) {
                 }],
             }
 
-            console.error('Error running setup command')
+            console.error('❌ Error running setup command')
             console.error('This is probably something your teacher needs to fix')
             console.error()
 
-            console.error('Message: ' + error.message)
+            console.error('Command: ' + inputs.setupCommand)
+            console.error('Error: ' + rs.error.message)
 
+            console.error('stdout:')
+            console.error(rs.stdout.toString())
             console.error()
 
-            if (error.stdout) {
-                console.error('stdout:')
-                console.error(error.stdout.toString())
-                console.error()
-            }
-            if (error.stderr) {
-                console.error('stderr:')
-                console.error(error.stderr.toString())
-            }
+            console.error('stderr:')
+            console.error(rs.stderr.toString())
 
             core.setOutput('result', btoa(JSON.stringify(result)))
 
-            // Tell the next functions not to bother
+            // Tell next stop to not bother
             return false;
+
         }
     }
 
     return true;
 }
 
+/**
+ * Build the java code. 
+ * 
+ * We don't care about output here, just that it builds without an error code > 0.
+ */
 function build(inputs) {
     try {
         execSync(inputs.buildCommand, {
             timeout: inputs.timeout,
-            stdio: 'inherit',
+            stdio: 'pipe',
             env,
         })
     } catch (error) {
         const result = {
             version: 1,
             status: 'error',
-            max_score: 0,
+            max_score: inputs.maxScore,
             tests: [{
                 name: inputs.testName || 'Unknown Test',
                 status: 'error',
-                message: error.message,
+                message: 'Error building submitted code, see ' + (inputs.textName || 'Unknown Test') + ' above for more details',
                 test_code: `${inputs.buildCommand || 'Unknown Command'}`,
                 filename: '',
                 line_no: 0,
@@ -102,20 +108,11 @@ function build(inputs) {
             }],
         }
 
-        console.error('Error building Java code')
-        console.error()
-        console.error('Error: ' + error.message)
-        console.error()
+        console.info(error);
 
-        if (error.stdout) {
-            console.error('stdout:')
-            console.error(error.stdout.toString())
-            console.error()
-        }
-        if (error.stderr) {
-            console.error('stderr:')
-            console.error(error.stderr.toString())
-        }
+        console.error()
+        console.error('❌Error building Java code')
+        console.error('Error: ' + error.message)
 
         core.setOutput('result', btoa(JSON.stringify(result)))
 
