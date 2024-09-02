@@ -120,13 +120,13 @@ function build(inputs) {
 
         if (error.stdout && error.stdout.length > 0) {
             console.error();
-            console.error('stdout:')
+            console.error('Standard Output:')
             console.error(error.stdout.toString().trim())
         }
 
         if (error.stderr && error.stderr.length > 0) {
             console.error()
-            console.error('stderr:')
+            console.error('Error Output:')
             console.error(error.stderr.toString().trim())
         }
 
