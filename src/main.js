@@ -205,11 +205,20 @@ function run(inputs) {
         let testCount = dots.match(/\./g).length
         let errorCount = dots.match(/E/gi).length
 
+        if (inputs.partialCredit) {
+            // Calculate the score based on the number of tests passed
+            let score = (testCount - errorCount) / testCount * inputs.maxScore
+            result.tests[0].score = +score.toFixed(2)
+        } else {
+            // If partial credit is not allowed, then we only get credit if all tests pass
+            result.tests[0].score = 0
+        }
+
         console.error()
         if (testCount === errorCount) {
-            console.error('❌ All ' + testCount + ' tests failed')
+            console.error('❌ All ' + testCount + ' tests failed (0 of ' + inputs.maxScore + ' points)')
         } else {
-            console.error('❌ ' + errorCount + ' of ' + testCount + ' tests failed')
+            console.error('❌ ' + errorCount + ' of ' + testCount + ' tests failed (' + result.tests[0].score + ' of ' + inputs.maxScore + ' points)')
         }
 
         // Get the error lines for mesages
