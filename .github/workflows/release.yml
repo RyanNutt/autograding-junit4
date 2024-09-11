@@ -10,34 +10,38 @@ jobs:
   release:
     runs-on: ubuntu-latest
     steps:
+      # Get environment variables for later
+      - uses: FranzDiebold/github-env-vars-action@v2
+      
       - uses: actions/checkout@v4
-        with:
-          ref: releases/v1
-          fetch-depth: 0
-      - name: Git config
+      - name: Setup Git
         run: |
-          git config user.name "Ryan Nutt"
-          git config user.email ryan@nutt.com
-      - name: Run build and commit to releases/v1
+          git config --global user.email "ryan@nutt.com"
+          git config --global user.name "Ryan Nutt"
+      - name: Run build
         run: |
-          git reset --hard origin/main
           npm install --silent
           npm run build
           git add dist/
-          git commit -m "Release v1"
-          git push -f origin releases/v1
+          git commit -m "Releasing"
       - name: Get version
         id: project-version
         uses: "euberdeveloper/ga-project-version@main"
         with:
           package-manager: npm
-      - name: Tag and push v1
+      - name: Tag latest
+        # Only want to tag latest if this push was to main branch
+        if: env.CI_REF_NAME == 'main'
         run: |
-          git tag -f v1 # Since we are already on releases/v1 we don't need a ref. This will tag HEAD of releases/v1.
-          git push origin v1 --force
-      - name: Create Release
-        id: create_release
-        uses: ncipollo/release-action@v1
-        with:
-          tag: v1
-          allowUpdates: true
+          git tag -f latest # Since we are already on main we don't need a ref. This will tag HEAD of main.
+          git push origin latest --force
+      # - name: Tag and push v1
+      #   run: |
+      #     git tag -f v1 # Since we are already on releases/v1 we don't need a ref. This will tag HEAD of releases/v1.
+      #     git push origin v1 --force
+      # - name: Create Release
+      #   id: create_release
+      #   uses: ncipollo/release-action@v1
+      #   with:
+      #     tag: v1
+      #     allowUpdates: true

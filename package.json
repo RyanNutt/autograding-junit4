@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/RyanNutt/autograding-junit4.git"
+    "url": "git+https://github.com/compscirocks/autograding-junit4.git"
   },
   "author": "RyanNutt",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/RyanNutt/autograding-junit4/issues"
+    "url": "https://github.com/compscirocks/autograding-junit4/issues"
   },
-  "homepage": "https://github.com/RyanNutt/autograding-junit4#readme",
+  "homepage": "https://github.com/compscirocks/autograding-junit4#readme",
   "dependencies": {
     "@actions/core": "^1.10.1",
     "@actions/exec": "^1.1.1",
