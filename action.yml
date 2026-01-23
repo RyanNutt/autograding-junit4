@@ -12,6 +12,10 @@ inputs:
   test-class:
     description: "Name of the test class, comma separated if multiple"
     required: true
+  build:
+    description: "Comma separate list of files to build, or all if not specified"
+    default: ""
+    required: false
   timeout:
     description: "Time in minutes to wait for the test to complete"
     required: false
@@ -27,11 +31,16 @@ inputs:
   partial-credit:
     description: "If true, students will receive partial credit for passing some tests"
     required: false
-    default: "false"
+    default: "true"
+  stacktrace:
+    description: "Include the JUnit stack trace in a collapsible section in the feedback"
+    required: false
+    default: "true"
 
 outputs:
   result:
     description: "Outputs from the test run"
+
 runs:
   using: "node20"
   main: "dist/main.js"

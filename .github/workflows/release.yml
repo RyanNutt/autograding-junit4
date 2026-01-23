@@ -23,25 +23,17 @@ jobs:
           npm install --silent
           npm run build
           git add dist/
-          git commit -m "Releasing"
+          git commit -m "Releasing" --allow-empty
+          git push -f origin ${{ env.CI_REF_NAME }}
       - name: Get version
         id: project-version
         uses: "euberdeveloper/ga-project-version@main"
         with:
           package-manager: npm
-      - name: Tag latest
-        # Only want to tag latest if this push was to main branch
-        if: env.CI_REF_NAME == 'main'
+      - name: Create release
         run: |
-          git tag -f latest # Since we are already on main we don't need a ref. This will tag HEAD of main.
-          git push origin latest --force
-      # - name: Tag and push v1
-      #   run: |
-      #     git tag -f v1 # Since we are already on releases/v1 we don't need a ref. This will tag HEAD of releases/v1.
-      #     git push origin v1 --force
-      # - name: Create Release
-      #   id: create_release
-      #   uses: ncipollo/release-action@v1
-      #   with:
-      #     tag: v1
-      #     allowUpdates: true
+          gh release delete ${{ env.CI_REF_NAME }} -y || echo "No release to delete"
+          gh release create ${{ env.CI_REF_NAME }} -t ${{ env.CI_REF_NAME }} -n "Release ${{ env.CI_REF_NAME }}"
+        env:
+          GH_TOKEN: ${{ github.token }}
+
